@@ -102,11 +102,12 @@ function App() {
   const [mode, setMode] = useState<LangMode>(loadInitialMode)
   const [copied, setCopied] = useState(false)
 
-  // Oberflächensprache: nur bei expliziter Türkisch-Wahl türkisch, sonst Deutsch.
+  // Analysesprache: im Auto-Modus automatisch erkannt (Deutsch als Rückfall).
+  const language: Language = mode === 'auto' ? detectLanguage(text) : mode
+  // Oberfläche bleibt Deutsch (Standard) und wird NUR türkisch, wenn der
+  // Nutzer ausdrücklich „Türkçe" wählt. Auto erkennt nur die Analysesprache.
   const uiLang: Language = mode === 'tr' ? 'tr' : 'de'
   const t = UI[uiLang]
-  // Analysesprache: im Auto-Modus automatisch erkannt.
-  const language: Language = mode === 'auto' ? detectLanguage(text) : mode
   const analysis = useMemo(() => analyze(text, language), [text, language])
   const hasText = text.trim().length > 0
 
