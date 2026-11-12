@@ -10,9 +10,12 @@ import { UI, type UiStrings } from './lib/i18n'
 import './App.css'
 
 type LangMode = 'auto' | Language
+type Theme = 'auto' | 'light' | 'dark'
 
 const STORAGE_KEY = 'freenlp:text'
 const LANG_KEY = 'freenlp:lang'
+const THEME_KEY = 'freenlp:theme'
+const THEME_ORDER: Theme[] = ['auto', 'light', 'dark']
 
 const LANGUAGES: { id: LangMode; label: string }[] = [
   { id: 'auto', label: 'Auto' },
@@ -141,9 +144,22 @@ function loadInitialMode(): LangMode {
   }
 }
 
+function loadInitialTheme(): Theme {
+  try {
+    const stored = localStorage.getItem(THEME_KEY)
+    if (stored === 'light' || stored === 'dark' || stored === 'auto') {
+      return stored
+    }
+    return 'auto'
+  } catch {
+    return 'auto'
+  }
+}
+
 function App() {
   const [text, setText] = useState(loadInitialText)
   const [mode, setMode] = useState<LangMode>(loadInitialMode)
+  const [theme, setTheme] = useState<Theme>(loadInitialTheme)
   const [copied, setCopied] = useState(false)
 
   // Analysesprache: im Auto-Modus automatisch erkannt (Deutsch als Rückfall).
@@ -170,6 +186,25 @@ function App() {
       // Speicher nicht verfügbar – ohne Persistenz weiterarbeiten.
     }
   }, [mode])
+
+  useEffect(() => {
+    const root = document.documentElement
+    if (theme === 'auto') {
+      delete root.dataset.theme
+    } else {
+      root.dataset.theme = theme
+    }
+    try {
+      localStorage.setItem(THEME_KEY, theme)
+    } catch {
+      // Speicher nicht verfügbar – ohne Persistenz weiterarbeiten.
+    }
+  }, [theme])
+
+  const cycleTheme = () => {
+    const next = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % THEME_ORDER.length]
+    setTheme(next)
+  }
 
   const stats: StatRow[] = [
     { label: t.stats.characters, value: formatInteger(analysis.characters) },
@@ -233,20 +268,25 @@ function App() {
           Free<span className="accent">NLP</span>
         </h1>
         <p className="tagline">{t.tagline}</p>
-        <div className="lang-switch" role="group" aria-label="Sprache / Dil">
-          {LANGUAGES.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={option.id === mode ? 'lang active' : 'lang'}
-              aria-pressed={option.id === mode}
-              onClick={() => {
-                setMode(option.id)
-              }}
-            >
-              {option.label}
-            </button>
-          ))}
+        <div className="controls">
+          <div className="lang-switch" role="group" aria-label="Sprache / Dil">
+            {LANGUAGES.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                className={option.id === mode ? 'lang active' : 'lang'}
+                aria-pressed={option.id === mode}
+                onClick={() => {
+                  setMode(option.id)
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+          <button type="button" className="theme-btn" onClick={cycleTheme}>
+            {t.theme[theme]}
+          </button>
         </div>
         {mode === 'auto' && hasText && (
           <p className="lang-hint">

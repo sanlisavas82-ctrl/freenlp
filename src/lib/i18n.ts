@@ -21,6 +21,7 @@ export interface UiStrings {
   topBigrams: string
   empty: string
   footer: string
+  theme: { auto: string; light: string; dark: string }
   stats: {
     characters: string
     charactersNoSpaces: string
@@ -61,6 +62,7 @@ export const UI: Record<Language, UiStrings> = {
     topBigrams: 'Häufige Wortpaare',
     empty: 'Noch keine Daten – gib oben einen Text ein, um die Analyse zu starten.',
     footer: 'FreeNLP · Alle Berechnungen laufen lokal in deinem Browser.',
+    theme: { auto: '🌓 System', light: '☀️ Hell', dark: '🌙 Dunkel' },
     stats: {
       characters: 'Zeichen',
       charactersNoSpaces: 'Ohne Leerzeichen',
@@ -99,6 +101,7 @@ export const UI: Record<Language, UiStrings> = {
     topBigrams: 'Sık kelime çiftleri',
     empty: 'Henüz veri yok – analizi başlatmak için yukarıya bir metin girin.',
     footer: 'FreeNLP · Tüm hesaplamalar tarayıcınızda yerel olarak çalışır.',
+    theme: { auto: '🌓 Sistem', light: '☀️ Açık', dark: '🌙 Koyu' },
     stats: {
       characters: 'Karakter',
       charactersNoSpaces: 'Boşluksuz',

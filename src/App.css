@@ -18,14 +18,37 @@
   color: var(--accent);
 }
 
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 14px;
+}
+
 .lang-switch {
   display: inline-flex;
   gap: 4px;
-  margin-top: 14px;
   padding: 4px;
   border-radius: 10px;
   background: var(--panel);
   border: 1px solid var(--border);
+}
+
+.theme-btn {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--text-h);
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.theme-btn:hover {
+  border-color: var(--accent-border);
 }
 
 .lang-switch .lang {
