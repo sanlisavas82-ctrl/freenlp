@@ -96,6 +96,29 @@ function buildMarkdown(
   return lines.join('\n')
 }
 
+function csvEscape(value: string): string {
+  return `"${value.replace(/"/gu, '""')}"`
+}
+
+function buildCsv(
+  analysis: Analysis,
+  stats: StatRow[],
+  t: UiStrings,
+  uiLang: Language,
+): string {
+  const header = uiLang === 'tr' ? ['Metrik', 'Değer'] : ['Metrik', 'Wert']
+  const rows: string[][] = [
+    header,
+    [
+      t.readability,
+      `${formatInteger(analysis.readability)} (${readabilityLabel(analysis.readability, uiLang)})`,
+    ],
+    [t.sentiment, t.sentimentLabels[analysis.sentiment]],
+    ...stats.map((row) => [row.label, row.value]),
+  ]
+  return rows.map((row) => row.map(csvEscape).join(',')).join('\n')
+}
+
 function downloadFile(filename: string, content: string, mime: string): void {
   const blob = new Blob([content], { type: mime })
   const url = URL.createObjectURL(blob)
@@ -257,6 +280,14 @@ function App() {
     )
   }
 
+  const handleDownloadCsv = () => {
+    downloadFile(
+      'freenlp-analyse.csv',
+      buildCsv(analysis, stats, t, uiLang),
+      'text/csv;charset=utf-8',
+    )
+  }
+
   const handlePrint = () => {
     window.print()
   }
@@ -333,6 +364,14 @@ function App() {
           onClick={handleDownloadMd}
         >
           {t.downloadMd}
+        </button>
+        <button
+          type="button"
+          className="btn"
+          disabled={!hasText}
+          onClick={handleDownloadCsv}
+        >
+          {t.downloadCsv}
         </button>
         <button
           type="button"

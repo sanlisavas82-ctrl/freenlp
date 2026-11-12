@@ -10,6 +10,7 @@ export interface UiStrings {
   copied: string
   download: string
   downloadMd: string
+  downloadCsv: string
   print: string
   clear: string
   readability: string
@@ -51,6 +52,7 @@ export const UI: Record<Language, UiStrings> = {
     copied: 'Kopiert ✓',
     download: '.txt',
     downloadMd: '.md',
+    downloadCsv: '.csv',
     print: 'PDF',
     clear: 'Leeren',
     readability: 'Lesbarkeit',
@@ -90,6 +92,7 @@ export const UI: Record<Language, UiStrings> = {
     copied: 'Kopyalandı ✓',
     download: '.txt',
     downloadMd: '.md',
+    downloadCsv: '.csv',
     print: 'PDF',
     clear: 'Temizle',
     readability: 'Okunabilirlik',
