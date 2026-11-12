@@ -1,32 +1,54 @@
-# React + TypeScript + Vite
+# FreeNLP
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Web-Anwendung auf Basis von **React 19**, **TypeScript** und **Vite**.
 
-Currently, two official plugins are available:
+## Tech-Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- [Vite](https://vite.dev/) – Build-Tool & Dev-Server (HMR)
+- [React 19](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/) (5.9)
+- [ESLint](https://eslint.org/) mit typbasierten Regeln (`typescript-eslint`)
 
-## React Compiler
+## Voraussetzungen
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [Node.js](https://nodejs.org/) 20+ und npm
 
-## Expanding the Oxlint configuration
+## Erste Schritte
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install      # Abhängigkeiten installieren
+npm run dev      # Dev-Server starten (http://localhost:5173)
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Skripte
+
+| Befehl            | Beschreibung                                      |
+| ----------------- | ------------------------------------------------- |
+| `npm run dev`     | Startet den Vite-Dev-Server mit Hot Module Reload |
+| `npm run build`   | Type-Check (`tsc -b`) + Production-Build nach `dist/` |
+| `npm run preview` | Lokale Vorschau des Production-Builds             |
+| `npm run lint`    | Prüft den Code mit ESLint                         |
+
+## Linting
+
+Das Projekt nutzt eine typbasierte ESLint-Flat-Config (`eslint.config.js`) mit:
+
+- `tseslint.configs.recommendedTypeChecked`
+- `tseslint.configs.strictTypeChecked`
+- `tseslint.configs.stylisticTypeChecked`
+- `eslint-plugin-react-hooks`
+- `eslint-plugin-react-refresh`
+
+Die type-aware Regeln setzen `strictNullChecks` voraus (in `tsconfig.app.json` /
+`tsconfig.node.json` über `"strict": true` aktiviert).
+
+## Projektstruktur
+
+```
+freenlp/
+├── src/              # Anwendungscode (Komponenten, Assets, Styles)
+├── public/           # Statische Dateien
+├── eslint.config.js  # ESLint Flat-Config (typbasiert)
+├── tsconfig*.json    # TypeScript-Konfiguration
+└── vite.config.ts    # Vite-Konfiguration
+```
