@@ -22,6 +22,7 @@ export interface UiStrings {
   shortestSentence: string
   topWords: string
   topBigrams: string
+  topLetters: string
   empty: string
   footer: string
   theme: { auto: string; light: string; dark: string }
@@ -66,6 +67,7 @@ export const UI: Record<Language, UiStrings> = {
     shortestSentence: 'Kürzester Satz',
     topWords: 'Häufigste Wörter',
     topBigrams: 'Häufige Wortpaare',
+    topLetters: 'Buchstaben-Häufigkeit',
     empty: 'Noch keine Daten – gib oben einen Text ein, um die Analyse zu starten.',
     footer: 'FreeNLP · Alle Berechnungen laufen lokal in deinem Browser.',
     theme: { auto: '🌓 System', light: '☀️ Hell', dark: '🌙 Dunkel' },
@@ -108,6 +110,7 @@ export const UI: Record<Language, UiStrings> = {
     shortestSentence: 'En kısa cümle',
     topWords: 'En sık kelimeler',
     topBigrams: 'Sık kelime çiftleri',
+    topLetters: 'Harf sıklığı',
     empty: 'Henüz veri yok – analizi başlatmak için yukarıya bir metin girin.',
     footer: 'FreeNLP · Tüm hesaplamalar tarayıcınızda yerel olarak çalışır.',
     theme: { auto: '🌓 Sistem', light: '☀️ Açık', dark: '🌙 Koyu' },

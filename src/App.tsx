@@ -484,6 +484,13 @@ function App() {
         </section>
       )}
 
+      {analysis.topLetters.length > 0 && (
+        <section className="section">
+          <h2>{t.topLetters}</h2>
+          <WordBars items={analysis.topLetters} />
+        </section>
+      )}
+
       <footer className="app-footer">{t.footer}</footer>
     </>
   )

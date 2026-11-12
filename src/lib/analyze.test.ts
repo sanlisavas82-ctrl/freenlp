@@ -59,6 +59,12 @@ describe('analyze – Zählungen', () => {
     expect(r.shortestSentence).toBe('Kurz.')
     expect(r.longestSentence).toContain('deutlich längerer Satz')
   })
+
+  it('zählt die Buchstaben-Häufigkeit', () => {
+    const r = analyze('aabbbc')
+    expect(r.topLetters[0]).toEqual({ word: 'b', count: 3 })
+    expect(r.topLetters[1]).toEqual({ word: 'a', count: 2 })
+  })
 })
 
 describe('analyze – Wortpaare', () => {

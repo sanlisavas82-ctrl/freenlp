@@ -34,6 +34,7 @@ export interface Analysis {
   negativeWords: string[]
   topWords: WordCount[]
   topBigrams: WordCount[]
+  topLetters: WordCount[]
 }
 
 interface Lexicon {
@@ -241,6 +242,15 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     if (count === 1) hapaxCount += 1
   }
 
+  const letterFreq = new Map<string, number>()
+  for (const letter of text.toLowerCase().match(/\p{L}/gu) ?? []) {
+    letterFreq.set(letter, (letterFreq.get(letter) ?? 0) + 1)
+  }
+  const topLetters: WordCount[] = [...letterFreq.entries()]
+    .map(([word, count]) => ({ word, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12)
+
   const wordCount = tokens.length
   const avgSentenceLength = sentenceCount > 0 ? wordCount / sentenceCount : 0
   const avgSyllables = wordCount > 0 ? syllableTotal / wordCount : 0
@@ -280,5 +290,6 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     negativeWords: [...negativeSet],
     topWords,
     topBigrams,
+    topLetters,
   }
 }
