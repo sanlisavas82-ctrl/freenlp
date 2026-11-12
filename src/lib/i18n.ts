@@ -9,6 +9,8 @@ export interface UiStrings {
   copy: string
   copied: string
   download: string
+  downloadMd: string
+  print: string
   clear: string
   readability: string
   sentiment: string
@@ -42,9 +44,11 @@ export const UI: Record<Language, UiStrings> = {
     detected: 'Erkannt',
     langNames: { de: 'Deutsch', tr: 'Türkisch' },
     example: 'Beispieltext',
-    copy: 'Ergebnis kopieren',
+    copy: 'Kopieren',
     copied: 'Kopiert ✓',
-    download: 'Als Datei (.txt)',
+    download: '.txt',
+    downloadMd: '.md',
+    print: 'PDF',
     clear: 'Leeren',
     readability: 'Lesbarkeit',
     sentiment: 'Stimmung',
@@ -76,9 +80,11 @@ export const UI: Record<Language, UiStrings> = {
     detected: 'Algılanan',
     langNames: { de: 'Almanca', tr: 'Türkçe' },
     example: 'Örnek metin',
-    copy: 'Sonucu kopyala',
+    copy: 'Kopyala',
     copied: 'Kopyalandı ✓',
-    download: 'Dosya (.txt)',
+    download: '.txt',
+    downloadMd: '.md',
+    print: 'PDF',
     clear: 'Temizle',
     readability: 'Okunabilirlik',
     sentiment: 'Duygu',

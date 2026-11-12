@@ -46,6 +46,11 @@ function formatDecimal(value: number): string {
   })
 }
 
+interface StatRow {
+  label: string
+  value: string
+}
+
 function buildSummary(analysis: Analysis, t: UiStrings, uiLang: Language): string {
   const lines = [
     'FreeNLP',
@@ -57,6 +62,45 @@ function buildSummary(analysis: Analysis, t: UiStrings, uiLang: Language): strin
     `${t.stats.readingMinutes}: ${formatDecimal(analysis.readingMinutes)}`,
   ]
   return lines.join('\n')
+}
+
+function buildMarkdown(
+  analysis: Analysis,
+  stats: StatRow[],
+  t: UiStrings,
+  uiLang: Language,
+): string {
+  const lines = ['# FreeNLP', '', `| | |`, `| --- | --- |`]
+  lines.push(
+    `| ${t.readability} | ${formatInteger(analysis.readability)} (${readabilityLabel(analysis.readability, uiLang)}) |`,
+  )
+  lines.push(`| ${t.sentiment} | ${t.sentimentLabels[analysis.sentiment]} |`)
+  for (const row of stats) {
+    lines.push(`| ${row.label} | ${row.value} |`)
+  }
+  if (analysis.topWords.length > 0) {
+    lines.push('', `## ${t.topWords}`)
+    for (const item of analysis.topWords) {
+      lines.push(`- ${item.word} (${formatInteger(item.count)})`)
+    }
+  }
+  if (analysis.topBigrams.length > 0) {
+    lines.push('', `## ${t.topBigrams}`)
+    for (const item of analysis.topBigrams) {
+      lines.push(`- ${item.word} (${formatInteger(item.count)})`)
+    }
+  }
+  return lines.join('\n')
+}
+
+function downloadFile(filename: string, content: string, mime: string): void {
+  const blob = new Blob([content], { type: mime })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
 }
 
 function WordBars({ items }: { items: Analysis['topWords'] }) {
@@ -127,6 +171,22 @@ function App() {
     }
   }, [mode])
 
+  const stats: StatRow[] = [
+    { label: t.stats.characters, value: formatInteger(analysis.characters) },
+    { label: t.stats.charactersNoSpaces, value: formatInteger(analysis.charactersNoSpaces) },
+    { label: t.stats.words, value: formatInteger(analysis.words) },
+    { label: t.stats.uniqueWords, value: formatInteger(analysis.uniqueWords) },
+    { label: t.stats.sentences, value: formatInteger(analysis.sentences) },
+    { label: t.stats.paragraphs, value: formatInteger(analysis.paragraphs) },
+    { label: t.stats.syllables, value: formatInteger(analysis.syllables) },
+    { label: t.stats.averageWordLength, value: formatDecimal(analysis.averageWordLength) },
+    { label: t.stats.averageWordsPerSentence, value: formatDecimal(analysis.averageWordsPerSentence) },
+    { label: t.stats.longestSentenceWords, value: formatInteger(analysis.longestSentenceWords) },
+    { label: t.stats.shortestSentenceWords, value: formatInteger(analysis.shortestSentenceWords) },
+    { label: t.stats.hapaxCount, value: formatInteger(analysis.hapaxCount) },
+    { label: t.stats.readingMinutes, value: formatDecimal(analysis.readingMinutes) },
+  ]
+
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value)
     setCopied(false)
@@ -146,33 +206,25 @@ function App() {
     )
   }
 
-  const handleDownload = () => {
-    const blob = new Blob([buildSummary(analysis, t, uiLang)], {
-      type: 'text/plain;charset=utf-8',
-    })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'freenlp-analyse.txt'
-    link.click()
-    URL.revokeObjectURL(url)
+  const handleDownloadTxt = () => {
+    downloadFile(
+      'freenlp-analyse.txt',
+      buildSummary(analysis, t, uiLang),
+      'text/plain;charset=utf-8',
+    )
   }
 
-  const stats: { label: string; value: string }[] = [
-    { label: t.stats.characters, value: formatInteger(analysis.characters) },
-    { label: t.stats.charactersNoSpaces, value: formatInteger(analysis.charactersNoSpaces) },
-    { label: t.stats.words, value: formatInteger(analysis.words) },
-    { label: t.stats.uniqueWords, value: formatInteger(analysis.uniqueWords) },
-    { label: t.stats.sentences, value: formatInteger(analysis.sentences) },
-    { label: t.stats.paragraphs, value: formatInteger(analysis.paragraphs) },
-    { label: t.stats.syllables, value: formatInteger(analysis.syllables) },
-    { label: t.stats.averageWordLength, value: formatDecimal(analysis.averageWordLength) },
-    { label: t.stats.averageWordsPerSentence, value: formatDecimal(analysis.averageWordsPerSentence) },
-    { label: t.stats.longestSentenceWords, value: formatInteger(analysis.longestSentenceWords) },
-    { label: t.stats.shortestSentenceWords, value: formatInteger(analysis.shortestSentenceWords) },
-    { label: t.stats.hapaxCount, value: formatInteger(analysis.hapaxCount) },
-    { label: t.stats.readingMinutes, value: formatDecimal(analysis.readingMinutes) },
-  ]
+  const handleDownloadMd = () => {
+    downloadFile(
+      'freenlp-analyse.md',
+      buildMarkdown(analysis, stats, t, uiLang),
+      'text/markdown;charset=utf-8',
+    )
+  }
+
+  const handlePrint = () => {
+    window.print()
+  }
 
   return (
     <>
@@ -230,9 +282,25 @@ function App() {
           type="button"
           className="btn"
           disabled={!hasText}
-          onClick={handleDownload}
+          onClick={handleDownloadTxt}
         >
           {t.download}
+        </button>
+        <button
+          type="button"
+          className="btn"
+          disabled={!hasText}
+          onClick={handleDownloadMd}
+        >
+          {t.downloadMd}
+        </button>
+        <button
+          type="button"
+          className="btn"
+          disabled={!hasText}
+          onClick={handlePrint}
+        >
+          {t.print}
         </button>
         <button
           type="button"
