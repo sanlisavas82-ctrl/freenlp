@@ -1,6 +1,8 @@
-import { useMemo, useState, type ChangeEvent } from 'react'
+import { useEffect, useMemo, useState, type ChangeEvent } from 'react'
 import { analyze, type Analysis } from './lib/analyze'
 import './App.css'
+
+const STORAGE_KEY = 'freenlp:text'
 
 const SAMPLE =
   'FreeNLP ist ein kostenloses Werkzeug zur Textanalyse. ' +
@@ -51,11 +53,39 @@ function WordBars({ items }: { items: Analysis['topWords'] }) {
   )
 }
 
+function loadInitialText(): string {
+  try {
+    return localStorage.getItem(STORAGE_KEY) ?? ''
+  } catch {
+    return ''
+  }
+}
+
 function App() {
-  const [text, setText] = useState('')
+  const [text, setText] = useState(loadInitialText)
   const [copied, setCopied] = useState(false)
   const analysis = useMemo(() => analyze(text), [text])
   const hasText = text.trim().length > 0
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, text)
+    } catch {
+      // Speicher nicht verfügbar – ohne Persistenz weiterarbeiten.
+    }
+  }, [text])
+
+  const handleDownload = () => {
+    const blob = new Blob([buildSummary(analysis)], {
+      type: 'text/plain;charset=utf-8',
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'freenlp-analyse.txt'
+    link.click()
+    URL.revokeObjectURL(url)
+  }
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value)
@@ -121,6 +151,14 @@ function App() {
         <span className="spacer" />
         <button type="button" className="btn" disabled={!hasText} onClick={handleCopy}>
           {copied ? 'Kopiert ✓' : 'Ergebnis kopieren'}
+        </button>
+        <button
+          type="button"
+          className="btn"
+          disabled={!hasText}
+          onClick={handleDownload}
+        >
+          Als Datei (.txt)
         </button>
         <button
           type="button"

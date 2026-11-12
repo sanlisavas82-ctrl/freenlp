@@ -28,6 +28,7 @@ npm run dev      # Dev-Server starten (http://localhost:5173)
 | `npm run build`   | Type-Check (`tsc -b`) + Production-Build nach `dist/` |
 | `npm run preview` | Lokale Vorschau des Production-Builds             |
 | `npm run lint`    | Prüft den Code mit ESLint                         |
+| `npm test`        | Führt die Unit-Tests (Vitest) aus                 |
 
 ## Linting
 
