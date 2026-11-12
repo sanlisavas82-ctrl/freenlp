@@ -14,14 +14,16 @@ Gebaut mit **React 19**, **TypeScript** und **Vite**.
 - **Lesbarkeitsindex** (Flesch-Reading-Ease, Amstad-Formel) mit Einstufung
 - **Stimmungsanalyse** (Sentiment) – positiv / negativ / neutral, mit
   Berücksichtigung von **Negationen** („nicht gut") und **Verstärkern** („sehr gut")
-- **Häufigste Wörter** und **häufige Wortpaare** (Bigramme) als Balkendiagramm
+- **Gefundene Stimmungswörter** werden als Chips angezeigt (transparent, mit Negation)
+- **Häufigste Wörter**, **Wortpaare** (Bigramme) und **Buchstaben-Häufigkeit** als Balken
+- **Längster & kürzester Satz** im Volltext
 - **Zwei Sprachen:** Deutsch (Standard) und Türkisch
   - Automatische **Spracherkennung** für die Analyse
   - Oberfläche auf Deutsch oder Türkisch umschaltbar
-- **Export:** Ergebnis kopieren, als **`.txt`** oder **`.md`** herunterladen,
-  oder per Druckfunktion als **PDF**
+- **Export:** Ergebnis kopieren, als **`.txt`**, **`.md`** oder **`.csv`**
+  herunterladen, oder per Druckfunktion als **PDF**
 - **Text bleibt erhalten** (localStorage) – auch nach dem Neuladen
-- **Dark-Mode** automatisch nach Systemeinstellung
+- **Hell/Dunkel-Umschalter** (System / Hell / Dunkel, gespeichert)
 
 ## Voraussetzungen
 

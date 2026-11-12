@@ -32,6 +32,12 @@ Eine vollständige, getestete Textanalyse-App – komplett im Browser, ohne Serv
    - #3 Weitere Kennzahlen: kürzester Satz, einmalige Wörter (Hapax)
    - #2 Stimmungsanalyse: Negationen & Verstärker berücksichtigt
    - #1 Export als Markdown (`.md`) und PDF (Druck)
+10. **Weitere Ausbaustufe:**
+    - Gefundene Stimmungswörter als Chips (transparente Analyse)
+    - Hell/Dunkel-Umschalter (System / Hell / Dunkel)
+    - CSV-Export
+    - Längster & kürzester Satz im Volltext
+    - Buchstaben-Häufigkeit
 
 ### Funktionsumfang heute
 - 11 Textstatistiken, Lesbarkeitsindex, Stimmungsanalyse
