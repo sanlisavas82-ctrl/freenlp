@@ -67,6 +67,65 @@
   cursor: not-allowed;
 }
 
+.highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.highlight {
+  padding: 20px;
+  border-radius: 14px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  text-align: center;
+}
+
+.highlight .hl-value {
+  display: block;
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.highlight .hl-word {
+  text-transform: capitalize;
+}
+
+.highlight .hl-title {
+  display: block;
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.highlight .hl-sub {
+  display: block;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.highlight.sentiment-positiv {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.highlight.sentiment-positiv .hl-value {
+  color: #16a34a;
+}
+
+.highlight.sentiment-negativ {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.highlight.sentiment-negativ .hl-value {
+  color: #dc2626;
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
