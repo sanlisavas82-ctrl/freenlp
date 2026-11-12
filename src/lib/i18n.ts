@@ -18,6 +18,8 @@ export interface UiStrings {
   score: string
   positiveWords: string
   negativeWords: string
+  longestSentence: string
+  shortestSentence: string
   topWords: string
   topBigrams: string
   empty: string
@@ -60,6 +62,8 @@ export const UI: Record<Language, UiStrings> = {
     score: 'Score',
     positiveWords: 'Positive Wörter',
     negativeWords: 'Negative Wörter',
+    longestSentence: 'Längster Satz',
+    shortestSentence: 'Kürzester Satz',
     topWords: 'Häufigste Wörter',
     topBigrams: 'Häufige Wortpaare',
     empty: 'Noch keine Daten – gib oben einen Text ein, um die Analyse zu starten.',
@@ -100,6 +104,8 @@ export const UI: Record<Language, UiStrings> = {
     score: 'Puan',
     positiveWords: 'Olumlu kelimeler',
     negativeWords: 'Olumsuz kelimeler',
+    longestSentence: 'En uzun cümle',
+    shortestSentence: 'En kısa cümle',
     topWords: 'En sık kelimeler',
     topBigrams: 'Sık kelime çiftleri',
     empty: 'Henüz veri yok – analizi başlatmak için yukarıya bir metin girin.',

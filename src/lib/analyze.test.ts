@@ -53,6 +53,12 @@ describe('analyze – Zählungen', () => {
     // Inhaltswörter: haus, groß, regnet, heute, wirklich, stark → alle einmalig
     expect(r.hapaxCount).toBe(6)
   })
+
+  it('liefert den Text des längsten und kürzesten Satzes', () => {
+    const r = analyze('Kurz. Dies ist ein deutlich längerer Satz mit vielen Wörtern.')
+    expect(r.shortestSentence).toBe('Kurz.')
+    expect(r.longestSentence).toContain('deutlich längerer Satz')
+  })
 })
 
 describe('analyze – Wortpaare', () => {

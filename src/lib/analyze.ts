@@ -22,6 +22,8 @@ export interface Analysis {
   averageWordsPerSentence: number
   longestSentenceWords: number
   shortestSentenceWords: number
+  longestSentence: string
+  shortestSentence: string
   hapaxCount: number
   readingMinutes: number
   readability: number
@@ -219,12 +221,18 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
 
   let longestSentenceWords = 0
   let shortestSentenceWords = 0
+  let longestSentence = ''
+  let shortestSentence = ''
   for (const sentence of sentenceMatches) {
     const count = (sentence.match(/[\p{L}\p{N}]+/gu) ?? []).length
     if (count === 0) continue
-    if (count > longestSentenceWords) longestSentenceWords = count
+    if (count > longestSentenceWords) {
+      longestSentenceWords = count
+      longestSentence = sentence.trim()
+    }
     if (shortestSentenceWords === 0 || count < shortestSentenceWords) {
       shortestSentenceWords = count
+      shortestSentence = sentence.trim()
     }
   }
 
@@ -260,6 +268,8 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     averageWordsPerSentence: avgSentenceLength,
     longestSentenceWords,
     shortestSentenceWords,
+    longestSentence,
+    shortestSentence,
     hapaxCount,
     readingMinutes: wordCount / 200,
     readability,

@@ -257,6 +257,35 @@
   letter-spacing: 0.5px;
 }
 
+.sentences {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.sentence-box {
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.sb-title {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.sb-text {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
 .section h2 {
   font-size: 20px;
   margin: 0 0 12px;

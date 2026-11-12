@@ -451,6 +451,23 @@ function App() {
         ))}
       </div>
 
+      {analysis.longestSentence !== '' && (
+        <div className="sentences">
+          <div className="sentence-box">
+            <span className="sb-title">
+              {t.longestSentence} · {formatInteger(analysis.longestSentenceWords)}
+            </span>
+            <p className="sb-text">{analysis.longestSentence}</p>
+          </div>
+          <div className="sentence-box">
+            <span className="sb-title">
+              {t.shortestSentence} · {formatInteger(analysis.shortestSentenceWords)}
+            </span>
+            <p className="sb-text">{analysis.shortestSentence}</p>
+          </div>
+        </div>
+      )}
+
       <section className="section">
         <h2>{t.topWords}</h2>
         {analysis.topWords.length > 0 ? (
