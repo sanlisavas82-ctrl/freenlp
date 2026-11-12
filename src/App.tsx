@@ -169,6 +169,8 @@ function App() {
     { label: t.stats.averageWordLength, value: formatDecimal(analysis.averageWordLength) },
     { label: t.stats.averageWordsPerSentence, value: formatDecimal(analysis.averageWordsPerSentence) },
     { label: t.stats.longestSentenceWords, value: formatInteger(analysis.longestSentenceWords) },
+    { label: t.stats.shortestSentenceWords, value: formatInteger(analysis.shortestSentenceWords) },
+    { label: t.stats.hapaxCount, value: formatInteger(analysis.hapaxCount) },
     { label: t.stats.readingMinutes, value: formatDecimal(analysis.readingMinutes) },
   ]
 

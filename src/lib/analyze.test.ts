@@ -46,6 +46,13 @@ describe('analyze – Zählungen', () => {
     expect(result.longestSentenceWords).toBe(4)
     expect(result.averageWordsPerSentence).toBe(4)
   })
+
+  it('berechnet kürzesten Satz und einmalige Wörter', () => {
+    const r = analyze('Das Haus ist groß. Es regnet heute wirklich stark.')
+    expect(r.shortestSentenceWords).toBe(4)
+    // Inhaltswörter: haus, groß, regnet, heute, wirklich, stark → alle einmalig
+    expect(r.hapaxCount).toBe(6)
+  })
 })
 
 describe('analyze – Wortpaare', () => {

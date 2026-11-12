@@ -28,6 +28,8 @@ export interface UiStrings {
     averageWordLength: string
     averageWordsPerSentence: string
     longestSentenceWords: string
+    shortestSentenceWords: string
+    hapaxCount: string
     readingMinutes: string
   }
   sentimentLabels: Record<SentimentLabel, string>
@@ -62,6 +64,8 @@ export const UI: Record<Language, UiStrings> = {
       averageWordLength: 'Ø Wortlänge',
       averageWordsPerSentence: 'Ø Wörter/Satz',
       longestSentenceWords: 'Längster Satz (W.)',
+      shortestSentenceWords: 'Kürzester Satz (W.)',
+      hapaxCount: 'Einmalige Wörter',
       readingMinutes: 'Lesezeit (min)',
     },
     sentimentLabels: { positiv: 'Positiv', negativ: 'Negativ', neutral: 'Neutral' },
@@ -94,6 +98,8 @@ export const UI: Record<Language, UiStrings> = {
       averageWordLength: 'Ort. kelime uzunluğu',
       averageWordsPerSentence: 'Ort. kelime/cümle',
       longestSentenceWords: 'En uzun cümle (kel.)',
+      shortestSentenceWords: 'En kısa cümle (kel.)',
+      hapaxCount: 'Tek geçen kelime',
       readingMinutes: 'Okuma süresi (dk)',
     },
     sentimentLabels: { positiv: 'Pozitif', negativ: 'Negatif', neutral: 'Nötr' },

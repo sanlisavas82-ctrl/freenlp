@@ -21,6 +21,8 @@ export interface Analysis {
   averageWordLength: number
   averageWordsPerSentence: number
   longestSentenceWords: number
+  shortestSentenceWords: number
+  hapaxCount: number
   readingMinutes: number
   readability: number
   readabilityLabel: string
@@ -172,9 +174,19 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     .slice(0, 6)
 
   let longestSentenceWords = 0
+  let shortestSentenceWords = 0
   for (const sentence of sentenceMatches) {
     const count = (sentence.match(/[\p{L}\p{N}]+/gu) ?? []).length
+    if (count === 0) continue
     if (count > longestSentenceWords) longestSentenceWords = count
+    if (shortestSentenceWords === 0 || count < shortestSentenceWords) {
+      shortestSentenceWords = count
+    }
+  }
+
+  let hapaxCount = 0
+  for (const count of frequency.values()) {
+    if (count === 1) hapaxCount += 1
   }
 
   const wordCount = tokens.length
@@ -203,6 +215,8 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     averageWordLength: wordCount > 0 ? letterTotal / wordCount : 0,
     averageWordsPerSentence: avgSentenceLength,
     longestSentenceWords,
+    shortestSentenceWords,
+    hapaxCount,
     readingMinutes: wordCount / 200,
     readability,
     readabilityLabel: wordCount > 0 ? readabilityLabel(readability, language) : '–',
