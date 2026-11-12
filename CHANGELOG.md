@@ -28,6 +28,10 @@ Eine vollständige, getestete Textanalyse-App – komplett im Browser, ohne Serv
    (Deutsch bleibt Standard)
 8. **Finale Version** – zusätzliche Kennzahlen (Ø Wörter/Satz, längster Satz),
    größeres Stimmungs-Lexikon, Metadaten & README
+9. **Roadmap-Issues abgearbeitet:**
+   - #3 Weitere Kennzahlen: kürzester Satz, einmalige Wörter (Hapax)
+   - #2 Stimmungsanalyse: Negationen & Verstärker berücksichtigt
+   - #1 Export als Markdown (`.md`) und PDF (Druck)
 
 ### Funktionsumfang heute
 - 11 Textstatistiken, Lesbarkeitsindex, Stimmungsanalyse
