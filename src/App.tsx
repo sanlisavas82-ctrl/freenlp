@@ -334,6 +334,35 @@ function App() {
         </div>
       </div>
 
+      {(analysis.positiveWords.length > 0 || analysis.negativeWords.length > 0) && (
+        <div className="sentiment-words">
+          {analysis.positiveWords.length > 0 && (
+            <div className="sw-group">
+              <span className="sw-title">{t.positiveWords}</span>
+              <div className="chips">
+                {analysis.positiveWords.map((word) => (
+                  <span className="chip chip-pos" key={`p-${word}`}>
+                    {word}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {analysis.negativeWords.length > 0 && (
+            <div className="sw-group">
+              <span className="sw-title">{t.negativeWords}</span>
+              <div className="chips">
+                {analysis.negativeWords.map((word) => (
+                  <span className="chip chip-neg" key={`n-${word}`}>
+                    {word}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="stats">
         {stats.map((stat) => (
           <div className="stat" key={stat.label}>

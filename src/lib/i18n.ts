@@ -15,6 +15,8 @@ export interface UiStrings {
   readability: string
   sentiment: string
   score: string
+  positiveWords: string
+  negativeWords: string
   topWords: string
   topBigrams: string
   empty: string
@@ -53,6 +55,8 @@ export const UI: Record<Language, UiStrings> = {
     readability: 'Lesbarkeit',
     sentiment: 'Stimmung',
     score: 'Score',
+    positiveWords: 'Positive Wörter',
+    negativeWords: 'Negative Wörter',
     topWords: 'Häufigste Wörter',
     topBigrams: 'Häufige Wortpaare',
     empty: 'Noch keine Daten – gib oben einen Text ein, um die Analyse zu starten.',
@@ -89,6 +93,8 @@ export const UI: Record<Language, UiStrings> = {
     readability: 'Okunabilirlik',
     sentiment: 'Duygu',
     score: 'Puan',
+    positiveWords: 'Olumlu kelimeler',
+    negativeWords: 'Olumsuz kelimeler',
     topWords: 'En sık kelimeler',
     topBigrams: 'Sık kelime çiftleri',
     empty: 'Henüz veri yok – analizi başlatmak için yukarıya bir metin girin.',

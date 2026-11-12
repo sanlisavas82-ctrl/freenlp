@@ -28,6 +28,8 @@ export interface Analysis {
   readabilityLabel: string
   sentiment: SentimentLabel
   sentimentScore: number
+  positiveWords: string[]
+  negativeWords: string[]
   topWords: WordCount[]
   topBigrams: WordCount[]
 }
@@ -173,6 +175,8 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
   // in einem Fenster von bis zu zwei Wörtern vor dem Stimmungswort.
   let positiveScore = 0
   let negativeScore = 0
+  const positiveSet = new Set<string>()
+  const negativeSet = new Set<string>()
   for (let i = 0; i < tokens.length; i += 1) {
     const token = tokens[i]
     const isPositive = lexicon.positive.has(token)
@@ -187,8 +191,14 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     }
 
     const countsAsPositive = negated ? !isPositive : isPositive
-    if (countsAsPositive) positiveScore += weight
-    else negativeScore += weight
+    const label = negated ? `(nicht) ${token}` : token
+    if (countsAsPositive) {
+      positiveScore += weight
+      positiveSet.add(label)
+    } else {
+      negativeScore += weight
+      negativeSet.add(label)
+    }
   }
 
   const topWords: WordCount[] = [...frequency.entries()]
@@ -256,6 +266,8 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     readabilityLabel: wordCount > 0 ? readabilityLabel(readability, language) : '–',
     sentiment,
     sentimentScore,
+    positiveWords: [...positiveSet],
+    negativeWords: [...negativeSet],
     topWords,
     topBigrams,
   }

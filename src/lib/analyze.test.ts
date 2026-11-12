@@ -88,6 +88,13 @@ describe('analyze – Stimmung', () => {
     expect(boosted.sentimentScore).toBeGreaterThan(plain.sentimentScore)
     expect(boosted.sentiment).toBe('positiv')
   })
+
+  it('listet die gefundenen Stimmungswörter auf', () => {
+    const r = analyze('Das ist super und gut, aber leider schlecht.')
+    expect(r.positiveWords).toContain('super')
+    expect(r.positiveWords).toContain('gut')
+    expect(r.negativeWords).toContain('schlecht')
+  })
 })
 
 describe('analyze – Türkisch', () => {
