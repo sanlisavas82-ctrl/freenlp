@@ -104,7 +104,7 @@ export function detectLanguage(text: string): Language {
   return turkishScore > germanScore ? 'tr' : 'de'
 }
 
-function readabilityLabelFor(score: number, language: Language): string {
+export function readabilityLabel(score: number, language: Language): string {
   const labels = READABILITY_LABELS[language]
   if (score >= 80) return labels[4]
   if (score >= 60) return labels[3]
@@ -185,7 +185,7 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     averageWordLength: wordCount > 0 ? letterTotal / wordCount : 0,
     readingMinutes: wordCount / 200,
     readability,
-    readabilityLabel: wordCount > 0 ? readabilityLabelFor(readability, language) : '–',
+    readabilityLabel: wordCount > 0 ? readabilityLabel(readability, language) : '–',
     sentiment,
     sentimentScore,
     topWords,

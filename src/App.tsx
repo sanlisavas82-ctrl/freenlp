@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from 'react'
-import { analyze, detectLanguage, type Analysis, type Language } from './lib/analyze'
+import {
+  analyze,
+  detectLanguage,
+  readabilityLabel,
+  type Analysis,
+  type Language,
+} from './lib/analyze'
+import { UI, type UiStrings } from './lib/i18n'
 import './App.css'
 
 type LangMode = 'auto' | Language
@@ -12,11 +19,6 @@ const LANGUAGES: { id: LangMode; label: string }[] = [
   { id: 'de', label: 'Deutsch' },
   { id: 'tr', label: 'Türkçe' },
 ]
-
-const LANGUAGE_NAMES: Record<Language, string> = {
-  de: 'Deutsch',
-  tr: 'Türkisch',
-}
 
 const SAMPLES: Record<Language, string> = {
   de:
@@ -44,15 +46,15 @@ function formatDecimal(value: number): string {
   })
 }
 
-function buildSummary(analysis: Analysis): string {
+function buildSummary(analysis: Analysis, t: UiStrings, uiLang: Language): string {
   const lines = [
-    'FreeNLP – Analyse',
-    `Zeichen: ${formatInteger(analysis.characters)}`,
-    `Wörter: ${formatInteger(analysis.words)}`,
-    `Sätze: ${formatInteger(analysis.sentences)}`,
-    `Lesbarkeit: ${formatInteger(analysis.readability)} (${analysis.readabilityLabel})`,
-    `Stimmung: ${analysis.sentiment}`,
-    `Lesezeit: ${formatDecimal(analysis.readingMinutes)} min`,
+    'FreeNLP',
+    `${t.stats.characters}: ${formatInteger(analysis.characters)}`,
+    `${t.stats.words}: ${formatInteger(analysis.words)}`,
+    `${t.stats.sentences}: ${formatInteger(analysis.sentences)}`,
+    `${t.readability}: ${formatInteger(analysis.readability)} (${readabilityLabel(analysis.readability, uiLang)})`,
+    `${t.sentiment}: ${t.sentimentLabels[analysis.sentiment]}`,
+    `${t.stats.readingMinutes}: ${formatDecimal(analysis.readingMinutes)}`,
   ]
   return lines.join('\n')
 }
@@ -99,6 +101,11 @@ function App() {
   const [text, setText] = useState(loadInitialText)
   const [mode, setMode] = useState<LangMode>(loadInitialMode)
   const [copied, setCopied] = useState(false)
+
+  // Oberflächensprache: nur bei expliziter Türkisch-Wahl türkisch, sonst Deutsch.
+  const uiLang: Language = mode === 'tr' ? 'tr' : 'de'
+  const t = UI[uiLang]
+  // Analysesprache: im Auto-Modus automatisch erkannt.
   const language: Language = mode === 'auto' ? detectLanguage(text) : mode
   const analysis = useMemo(() => analyze(text, language), [text, language])
   const hasText = text.trim().length > 0
@@ -119,25 +126,13 @@ function App() {
     }
   }, [mode])
 
-  const handleDownload = () => {
-    const blob = new Blob([buildSummary(analysis)], {
-      type: 'text/plain;charset=utf-8',
-    })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'freenlp-analyse.txt'
-    link.click()
-    URL.revokeObjectURL(url)
-  }
-
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value)
     setCopied(false)
   }
 
   const handleCopy = () => {
-    void navigator.clipboard.writeText(buildSummary(analysis)).then(
+    void navigator.clipboard.writeText(buildSummary(analysis, t, uiLang)).then(
       () => {
         setCopied(true)
         window.setTimeout(() => {
@@ -150,16 +145,28 @@ function App() {
     )
   }
 
+  const handleDownload = () => {
+    const blob = new Blob([buildSummary(analysis, t, uiLang)], {
+      type: 'text/plain;charset=utf-8',
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'freenlp-analyse.txt'
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
   const stats: { label: string; value: string }[] = [
-    { label: 'Zeichen', value: formatInteger(analysis.characters) },
-    { label: 'Ohne Leerzeichen', value: formatInteger(analysis.charactersNoSpaces) },
-    { label: 'Wörter', value: formatInteger(analysis.words) },
-    { label: 'Einzigartige Wörter', value: formatInteger(analysis.uniqueWords) },
-    { label: 'Sätze', value: formatInteger(analysis.sentences) },
-    { label: 'Absätze', value: formatInteger(analysis.paragraphs) },
-    { label: 'Silben', value: formatInteger(analysis.syllables) },
-    { label: 'Ø Wortlänge', value: formatDecimal(analysis.averageWordLength) },
-    { label: 'Lesezeit (min)', value: formatDecimal(analysis.readingMinutes) },
+    { label: t.stats.characters, value: formatInteger(analysis.characters) },
+    { label: t.stats.charactersNoSpaces, value: formatInteger(analysis.charactersNoSpaces) },
+    { label: t.stats.words, value: formatInteger(analysis.words) },
+    { label: t.stats.uniqueWords, value: formatInteger(analysis.uniqueWords) },
+    { label: t.stats.sentences, value: formatInteger(analysis.sentences) },
+    { label: t.stats.paragraphs, value: formatInteger(analysis.paragraphs) },
+    { label: t.stats.syllables, value: formatInteger(analysis.syllables) },
+    { label: t.stats.averageWordLength, value: formatDecimal(analysis.averageWordLength) },
+    { label: t.stats.readingMinutes, value: formatDecimal(analysis.readingMinutes) },
   ]
 
   return (
@@ -168,10 +175,8 @@ function App() {
         <h1>
           Free<span className="accent">NLP</span>
         </h1>
-        <p className="tagline">
-          Kostenlose Textanalyse – direkt im Browser, ohne Server.
-        </p>
-        <div className="lang-switch" role="group" aria-label="Sprache wählen">
+        <p className="tagline">{t.tagline}</p>
+        <div className="lang-switch" role="group" aria-label="Sprache / Dil">
           {LANGUAGES.map((option) => (
             <button
               key={option.id}
@@ -187,7 +192,9 @@ function App() {
           ))}
         </div>
         {mode === 'auto' && hasText && (
-          <p className="lang-hint">Erkannt: {LANGUAGE_NAMES[language]}</p>
+          <p className="lang-hint">
+            {t.detected}: {t.langNames[language]}
+          </p>
         )}
       </header>
 
@@ -195,8 +202,8 @@ function App() {
         className="editor"
         value={text}
         onChange={handleChange}
-        placeholder="Füge hier deinen Text ein oder tippe los …"
-        aria-label="Text zum Analysieren"
+        placeholder={t.placeholder}
+        aria-label={t.tagline}
       />
 
       <div className="toolbar">
@@ -204,15 +211,15 @@ function App() {
           type="button"
           className="btn"
           onClick={() => {
-            setText(SAMPLES[language])
+            setText(SAMPLES[uiLang])
             setCopied(false)
           }}
         >
-          Beispieltext
+          {t.example}
         </button>
         <span className="spacer" />
         <button type="button" className="btn" disabled={!hasText} onClick={handleCopy}>
-          {copied ? 'Kopiert ✓' : 'Ergebnis kopieren'}
+          {copied ? t.copied : t.copy}
         </button>
         <button
           type="button"
@@ -220,7 +227,7 @@ function App() {
           disabled={!hasText}
           onClick={handleDownload}
         >
-          Als Datei (.txt)
+          {t.download}
         </button>
         <button
           type="button"
@@ -231,21 +238,25 @@ function App() {
             setCopied(false)
           }}
         >
-          Leeren
+          {t.clear}
         </button>
       </div>
 
       <div className="highlights">
         <div className="highlight">
           <span className="hl-value">{formatInteger(analysis.readability)}</span>
-          <span className="hl-title">Lesbarkeit</span>
-          <span className="hl-sub">{analysis.readabilityLabel}</span>
+          <span className="hl-title">{t.readability}</span>
+          <span className="hl-sub">
+            {hasText ? readabilityLabel(analysis.readability, uiLang) : '–'}
+          </span>
         </div>
         <div className={`highlight sentiment-${analysis.sentiment}`}>
-          <span className="hl-value hl-word">{analysis.sentiment}</span>
-          <span className="hl-title">Stimmung</span>
+          <span className="hl-value hl-word">
+            {t.sentimentLabels[analysis.sentiment]}
+          </span>
+          <span className="hl-title">{t.sentiment}</span>
           <span className="hl-sub">
-            Score {formatDecimal(analysis.sentimentScore)}
+            {t.score} {formatDecimal(analysis.sentimentScore)}
           </span>
         </div>
       </div>
@@ -260,26 +271,22 @@ function App() {
       </div>
 
       <section className="section">
-        <h2>Häufigste Wörter</h2>
+        <h2>{t.topWords}</h2>
         {analysis.topWords.length > 0 ? (
           <WordBars items={analysis.topWords} />
         ) : (
-          <p className="empty">
-            Noch keine Daten – gib oben einen Text ein, um die Analyse zu starten.
-          </p>
+          <p className="empty">{t.empty}</p>
         )}
       </section>
 
       {analysis.topBigrams.length > 0 && (
         <section className="section">
-          <h2>Häufige Wortpaare</h2>
+          <h2>{t.topBigrams}</h2>
           <WordBars items={analysis.topBigrams} />
         </section>
       )}
 
-      <footer className="app-footer">
-        FreeNLP · Alle Berechnungen laufen lokal in deinem Browser.
-      </footer>
+      <footer className="app-footer">{t.footer}</footer>
     </>
   )
 }
