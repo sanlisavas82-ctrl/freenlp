@@ -44,6 +44,12 @@
   background: var(--accent);
 }
 
+.lang-hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--accent);
+}
+
 .editor {
   width: 100%;
   min-height: 220px;

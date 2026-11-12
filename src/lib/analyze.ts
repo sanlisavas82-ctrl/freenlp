@@ -84,6 +84,26 @@ export function countSyllables(word: string): number {
   return Math.max(1, groups ? groups.length : 0)
 }
 
+// Einfache Heuristik: erkennt Deutsch oder Türkisch an Stoppwörtern
+// und sprachtypischen Buchstaben. Standard ist Deutsch.
+export function detectLanguage(text: string): Language {
+  const tokens = text.toLowerCase().match(/[\p{L}]+/gu) ?? []
+  if (tokens.length === 0) return 'de'
+
+  let germanScore = 0
+  let turkishScore = 0
+  for (const token of tokens) {
+    if (LEXICONS.de.stopwords.has(token)) germanScore += 1
+    if (LEXICONS.tr.stopwords.has(token)) turkishScore += 1
+  }
+  // Türkisch-spezifische Buchstaben (ş, ğ, ı) stark gewichten.
+  turkishScore += (text.match(/[şğı]/gu) ?? []).length * 2
+  // Deutsches ß als Signal für Deutsch.
+  germanScore += (text.match(/ß/gu) ?? []).length * 2
+
+  return turkishScore > germanScore ? 'tr' : 'de'
+}
+
 function readabilityLabelFor(score: number, language: Language): string {
   const labels = READABILITY_LABELS[language]
   if (score >= 80) return labels[4]

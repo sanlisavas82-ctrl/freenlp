@@ -1,14 +1,22 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from 'react'
-import { analyze, type Analysis, type Language } from './lib/analyze'
+import { analyze, detectLanguage, type Analysis, type Language } from './lib/analyze'
 import './App.css'
+
+type LangMode = 'auto' | Language
 
 const STORAGE_KEY = 'freenlp:text'
 const LANG_KEY = 'freenlp:lang'
 
-const LANGUAGES: { id: Language; label: string }[] = [
+const LANGUAGES: { id: LangMode; label: string }[] = [
+  { id: 'auto', label: 'Auto' },
   { id: 'de', label: 'Deutsch' },
   { id: 'tr', label: 'Türkçe' },
 ]
+
+const LANGUAGE_NAMES: Record<Language, string> = {
+  de: 'Deutsch',
+  tr: 'Türkisch',
+}
 
 const SAMPLES: Record<Language, string> = {
   de:
@@ -75,18 +83,23 @@ function loadInitialText(): string {
   }
 }
 
-function loadInitialLanguage(): Language {
+function loadInitialMode(): LangMode {
   try {
-    return localStorage.getItem(LANG_KEY) === 'tr' ? 'tr' : 'de'
+    const stored = localStorage.getItem(LANG_KEY)
+    if (stored === 'tr' || stored === 'de' || stored === 'auto') {
+      return stored
+    }
+    return 'auto'
   } catch {
-    return 'de'
+    return 'auto'
   }
 }
 
 function App() {
   const [text, setText] = useState(loadInitialText)
-  const [language, setLanguage] = useState<Language>(loadInitialLanguage)
+  const [mode, setMode] = useState<LangMode>(loadInitialMode)
   const [copied, setCopied] = useState(false)
+  const language: Language = mode === 'auto' ? detectLanguage(text) : mode
   const analysis = useMemo(() => analyze(text, language), [text, language])
   const hasText = text.trim().length > 0
 
@@ -100,11 +113,11 @@ function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(LANG_KEY, language)
+      localStorage.setItem(LANG_KEY, mode)
     } catch {
       // Speicher nicht verfügbar – ohne Persistenz weiterarbeiten.
     }
-  }, [language])
+  }, [mode])
 
   const handleDownload = () => {
     const blob = new Blob([buildSummary(analysis)], {
@@ -163,16 +176,19 @@ function App() {
             <button
               key={option.id}
               type="button"
-              className={option.id === language ? 'lang active' : 'lang'}
-              aria-pressed={option.id === language}
+              className={option.id === mode ? 'lang active' : 'lang'}
+              aria-pressed={option.id === mode}
               onClick={() => {
-                setLanguage(option.id)
+                setMode(option.id)
               }}
             >
               {option.label}
             </button>
           ))}
         </div>
+        {mode === 'auto' && hasText && (
+          <p className="lang-hint">Erkannt: {LANGUAGE_NAMES[language]}</p>
+        )}
       </header>
 
       <textarea

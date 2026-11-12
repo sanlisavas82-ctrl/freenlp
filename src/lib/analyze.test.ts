@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { analyze, countSyllables } from './analyze'
+import { analyze, countSyllables, detectLanguage } from './analyze'
 
 describe('countSyllables', () => {
   it('zählt Vokalgruppen als Silben', () => {
@@ -79,5 +79,19 @@ describe('analyze – Türkisch', () => {
     expect(result.topWords.some((entry) => entry.word === 've')).toBe(false)
     const top = result.topWords.find((entry) => entry.word === 'araç')
     expect(top?.count).toBe(2)
+  })
+})
+
+describe('detectLanguage', () => {
+  it('erkennt Deutsch', () => {
+    expect(detectLanguage('Das ist ein schöner Tag und die Sonne scheint.')).toBe('de')
+  })
+
+  it('erkennt Türkisch an Wörtern und Buchstaben', () => {
+    expect(detectLanguage('Bu çok güzel bir gün ve hava harika.')).toBe('tr')
+  })
+
+  it('fällt bei leerem Text auf Deutsch zurück', () => {
+    expect(detectLanguage('')).toBe('de')
   })
 })
