@@ -64,3 +64,20 @@ describe('analyze – Stimmung', () => {
     expect(analyze('Das Haus steht am Baum.').sentiment).toBe('neutral')
   })
 })
+
+describe('analyze – Türkisch', () => {
+  it('erkennt positive türkische Texte', () => {
+    expect(analyze('Bu araç harika ve çok güzel.', 'tr').sentiment).toBe('positiv')
+  })
+
+  it('erkennt negative türkische Texte', () => {
+    expect(analyze('Bu çok kötü ve berbat.', 'tr').sentiment).toBe('negativ')
+  })
+
+  it('filtert türkische Stoppwörter', () => {
+    const result = analyze('araç araç bu ve bir', 'tr')
+    expect(result.topWords.some((entry) => entry.word === 've')).toBe(false)
+    const top = result.topWords.find((entry) => entry.word === 'araç')
+    expect(top?.count).toBe(2)
+  })
+})

@@ -1,15 +1,29 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from 'react'
-import { analyze, type Analysis } from './lib/analyze'
+import { analyze, type Analysis, type Language } from './lib/analyze'
 import './App.css'
 
 const STORAGE_KEY = 'freenlp:text'
+const LANG_KEY = 'freenlp:lang'
 
-const SAMPLE =
-  'FreeNLP ist ein kostenloses Werkzeug zur Textanalyse. ' +
-  'Es läuft komplett im Browser – ohne Server, ohne Anmeldung und ohne Kosten. ' +
-  'Das Werkzeug ist super und die Analyse ist wirklich hilfreich. ' +
-  'Füge einfach deinen Text ein und sieh dir sofort die Analyse an. ' +
-  'Probiere das Werkzeug aus und analysiere deine eigenen Texte!'
+const LANGUAGES: { id: Language; label: string }[] = [
+  { id: 'de', label: 'Deutsch' },
+  { id: 'tr', label: 'Türkçe' },
+]
+
+const SAMPLES: Record<Language, string> = {
+  de:
+    'FreeNLP ist ein kostenloses Werkzeug zur Textanalyse. ' +
+    'Es läuft komplett im Browser – ohne Server, ohne Anmeldung und ohne Kosten. ' +
+    'Das Werkzeug ist super und die Analyse ist wirklich hilfreich. ' +
+    'Füge einfach deinen Text ein und sieh dir sofort die Analyse an. ' +
+    'Probiere das Werkzeug aus und analysiere deine eigenen Texte!',
+  tr:
+    'FreeNLP ücretsiz bir metin analizi aracıdır. ' +
+    'Tamamen tarayıcıda çalışır – sunucu yok, kayıt yok, ücret yok. ' +
+    'Bu araç gerçekten harika ve analiz çok faydalı. ' +
+    'Metnini yapıştır ve istatistikleri hemen gör. ' +
+    'Aracı dene ve kendi metinlerini analiz et!',
+}
 
 function formatInteger(value: number): string {
   return value.toLocaleString('de-DE')
@@ -61,10 +75,19 @@ function loadInitialText(): string {
   }
 }
 
+function loadInitialLanguage(): Language {
+  try {
+    return localStorage.getItem(LANG_KEY) === 'tr' ? 'tr' : 'de'
+  } catch {
+    return 'de'
+  }
+}
+
 function App() {
   const [text, setText] = useState(loadInitialText)
+  const [language, setLanguage] = useState<Language>(loadInitialLanguage)
   const [copied, setCopied] = useState(false)
-  const analysis = useMemo(() => analyze(text), [text])
+  const analysis = useMemo(() => analyze(text, language), [text, language])
   const hasText = text.trim().length > 0
 
   useEffect(() => {
@@ -74,6 +97,14 @@ function App() {
       // Speicher nicht verfügbar – ohne Persistenz weiterarbeiten.
     }
   }, [text])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LANG_KEY, language)
+    } catch {
+      // Speicher nicht verfügbar – ohne Persistenz weiterarbeiten.
+    }
+  }, [language])
 
   const handleDownload = () => {
     const blob = new Blob([buildSummary(analysis)], {
@@ -127,6 +158,21 @@ function App() {
         <p className="tagline">
           Kostenlose Textanalyse – direkt im Browser, ohne Server.
         </p>
+        <div className="lang-switch" role="group" aria-label="Sprache wählen">
+          {LANGUAGES.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className={option.id === language ? 'lang active' : 'lang'}
+              aria-pressed={option.id === language}
+              onClick={() => {
+                setLanguage(option.id)
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </header>
 
       <textarea
@@ -142,7 +188,7 @@ function App() {
           type="button"
           className="btn"
           onClick={() => {
-            setText(SAMPLE)
+            setText(SAMPLES[language])
             setCopied(false)
           }}
         >

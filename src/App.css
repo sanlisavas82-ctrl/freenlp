@@ -18,6 +18,32 @@
   color: var(--accent);
 }
 
+.lang-switch {
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 14px;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.lang-switch .lang {
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 16px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--text);
+  background: transparent;
+}
+
+.lang-switch .lang.active {
+  color: #fff;
+  background: var(--accent);
+}
+
 .editor {
   width: 100%;
   min-height: 220px;
