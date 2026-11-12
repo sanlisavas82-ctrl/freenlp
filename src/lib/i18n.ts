@@ -23,6 +23,7 @@ export interface UiStrings {
   topWords: string
   topBigrams: string
   topLetters: string
+  wordLengths: string
   empty: string
   footer: string
   theme: { auto: string; light: string; dark: string }
@@ -35,6 +36,7 @@ export interface UiStrings {
     paragraphs: string
     syllables: string
     averageWordLength: string
+    lexicalDiversity: string
     averageWordsPerSentence: string
     longestSentenceWords: string
     shortestSentenceWords: string
@@ -68,6 +70,7 @@ export const UI: Record<Language, UiStrings> = {
     topWords: 'Häufigste Wörter',
     topBigrams: 'Häufige Wortpaare',
     topLetters: 'Buchstaben-Häufigkeit',
+    wordLengths: 'Wortlängen-Verteilung',
     empty: 'Noch keine Daten – gib oben einen Text ein, um die Analyse zu starten.',
     footer: 'FreeNLP · Alle Berechnungen laufen lokal in deinem Browser.',
     theme: { auto: '🌓 System', light: '☀️ Hell', dark: '🌙 Dunkel' },
@@ -80,6 +83,7 @@ export const UI: Record<Language, UiStrings> = {
       paragraphs: 'Absätze',
       syllables: 'Silben',
       averageWordLength: 'Ø Wortlänge',
+      lexicalDiversity: 'Vielfalt (TTR)',
       averageWordsPerSentence: 'Ø Wörter/Satz',
       longestSentenceWords: 'Längster Satz (W.)',
       shortestSentenceWords: 'Kürzester Satz (W.)',
@@ -111,6 +115,7 @@ export const UI: Record<Language, UiStrings> = {
     topWords: 'En sık kelimeler',
     topBigrams: 'Sık kelime çiftleri',
     topLetters: 'Harf sıklığı',
+    wordLengths: 'Kelime uzunluğu dağılımı',
     empty: 'Henüz veri yok – analizi başlatmak için yukarıya bir metin girin.',
     footer: 'FreeNLP · Tüm hesaplamalar tarayıcınızda yerel olarak çalışır.',
     theme: { auto: '🌓 Sistem', light: '☀️ Açık', dark: '🌙 Koyu' },
@@ -123,6 +128,7 @@ export const UI: Record<Language, UiStrings> = {
       paragraphs: 'Paragraf',
       syllables: 'Hece',
       averageWordLength: 'Ort. kelime uzunluğu',
+      lexicalDiversity: 'Çeşitlilik (TTR)',
       averageWordsPerSentence: 'Ort. kelime/cümle',
       longestSentenceWords: 'En uzun cümle (kel.)',
       shortestSentenceWords: 'En kısa cümle (kel.)',

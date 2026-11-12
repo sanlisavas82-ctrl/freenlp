@@ -130,7 +130,7 @@ function downloadFile(filename: string, content: string, mime: string): void {
 }
 
 function WordBars({ items }: { items: Analysis['topWords'] }) {
-  const maxCount = items.length > 0 ? items[0].count : 1
+  const maxCount = items.reduce((max, item) => Math.max(max, item.count), 1)
   return (
     <div className="words">
       {items.map((item) => (
@@ -238,6 +238,10 @@ function App() {
     { label: t.stats.paragraphs, value: formatInteger(analysis.paragraphs) },
     { label: t.stats.syllables, value: formatInteger(analysis.syllables) },
     { label: t.stats.averageWordLength, value: formatDecimal(analysis.averageWordLength) },
+    {
+      label: t.stats.lexicalDiversity,
+      value: `${(analysis.lexicalDiversity * 100).toLocaleString('de-DE', { maximumFractionDigits: 0 })} %`,
+    },
     { label: t.stats.averageWordsPerSentence, value: formatDecimal(analysis.averageWordsPerSentence) },
     { label: t.stats.longestSentenceWords, value: formatInteger(analysis.longestSentenceWords) },
     { label: t.stats.shortestSentenceWords, value: formatInteger(analysis.shortestSentenceWords) },
@@ -481,6 +485,13 @@ function App() {
         <section className="section">
           <h2>{t.topBigrams}</h2>
           <WordBars items={analysis.topBigrams} />
+        </section>
+      )}
+
+      {analysis.wordLengths.length > 0 && (
+        <section className="section">
+          <h2>{t.wordLengths}</h2>
+          <WordBars items={analysis.wordLengths} />
         </section>
       )}
 

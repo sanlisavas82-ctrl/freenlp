@@ -65,6 +65,14 @@ describe('analyze – Zählungen', () => {
     expect(r.topLetters[0]).toEqual({ word: 'b', count: 3 })
     expect(r.topLetters[1]).toEqual({ word: 'a', count: 2 })
   })
+
+  it('berechnet Wortlängen-Verteilung und lexikalische Vielfalt', () => {
+    const r = analyze('aa bb cc aa')
+    // drei verschiedene von vier Tokens → TTR 0,75
+    expect(r.lexicalDiversity).toBeCloseTo(0.75, 5)
+    const twoLetters = r.wordLengths.find((entry) => entry.word === '2')
+    expect(twoLetters?.count).toBe(4)
+  })
 })
 
 describe('analyze – Wortpaare', () => {

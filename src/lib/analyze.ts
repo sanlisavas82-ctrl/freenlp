@@ -19,6 +19,7 @@ export interface Analysis {
   paragraphs: number
   syllables: number
   averageWordLength: number
+  lexicalDiversity: number
   averageWordsPerSentence: number
   longestSentenceWords: number
   shortestSentenceWords: number
@@ -35,6 +36,7 @@ export interface Analysis {
   topWords: WordCount[]
   topBigrams: WordCount[]
   topLetters: WordCount[]
+  wordLengths: WordCount[]
 }
 
 interface Lexicon {
@@ -251,6 +253,16 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     .sort((a, b) => b.count - a.count)
     .slice(0, 12)
 
+  const lengthBuckets = new Map<string, number>()
+  for (const token of tokens) {
+    const key = token.length >= 10 ? '10+' : String(token.length)
+    lengthBuckets.set(key, (lengthBuckets.get(key) ?? 0) + 1)
+  }
+  const lengthOrder = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+']
+  const wordLengths: WordCount[] = lengthOrder
+    .map((key) => ({ word: key, count: lengthBuckets.get(key) ?? 0 }))
+    .filter((entry) => entry.count > 0)
+
   const wordCount = tokens.length
   const avgSentenceLength = sentenceCount > 0 ? wordCount / sentenceCount : 0
   const avgSyllables = wordCount > 0 ? syllableTotal / wordCount : 0
@@ -275,6 +287,7 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     paragraphs: paragraphs.length,
     syllables: syllableTotal,
     averageWordLength: wordCount > 0 ? letterTotal / wordCount : 0,
+    lexicalDiversity: wordCount > 0 ? new Set(tokens).size / wordCount : 0,
     averageWordsPerSentence: avgSentenceLength,
     longestSentenceWords,
     shortestSentenceWords,
@@ -291,5 +304,6 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     topWords,
     topBigrams,
     topLetters,
+    wordLengths,
   }
 }
