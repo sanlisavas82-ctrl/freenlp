@@ -19,6 +19,8 @@ export interface Analysis {
   paragraphs: number
   syllables: number
   averageWordLength: number
+  averageWordsPerSentence: number
+  longestSentenceWords: number
   readingMinutes: number
   readability: number
   readabilityLabel: string
@@ -46,13 +48,19 @@ const LEXICONS: Record<Language, Lexicon> = {
     ]),
     positive: new Set<string>([
       'gut', 'super', 'toll', 'klasse', 'schön', 'wunderbar', 'großartig', 'perfekt',
-      'liebe', 'freude', 'glücklich', 'positiv', 'danke', 'erfolg', 'stark', 'genial',
-      'hilfreich', 'angenehm', 'empfehlen', 'besser', 'beste', 'spitze', 'fantastisch',
+      'liebe', 'lieben', 'freude', 'glücklich', 'positiv', 'danke', 'erfolg', 'stark',
+      'genial', 'hilfreich', 'angenehm', 'empfehlen', 'besser', 'beste', 'spitze',
+      'fantastisch', 'freundlich', 'zufrieden', 'begeistert', 'wertvoll', 'sicher',
+      'einfach', 'schnell', 'erfolgreich', 'gelungen', 'vorteil', 'chance', 'lob',
+      'loben', 'freue', 'spaß', 'gern', 'gerne', 'optimal', 'herausragend',
     ]),
     negative: new Set<string>([
-      'schlecht', 'schlimm', 'furchtbar', 'schrecklich', 'hass', 'traurig', 'wütend',
-      'problem', 'fehler', 'negativ', 'nie', 'kaputt', 'schwach', 'ärger', 'langweilig',
-      'enttäuscht', 'nutzlos', 'schlechter', 'schlimmer', 'mangel', 'katastrophe',
+      'schlecht', 'schlimm', 'furchtbar', 'schrecklich', 'hass', 'hassen', 'traurig',
+      'wütend', 'problem', 'fehler', 'negativ', 'nie', 'kaputt', 'schwach', 'ärger',
+      'langweilig', 'enttäuscht', 'enttäuschend', 'nutzlos', 'schlechter', 'schlimmer',
+      'mangel', 'katastrophe', 'teuer', 'kompliziert', 'schwierig', 'unmöglich',
+      'angst', 'sorge', 'nachteil', 'risiko', 'verlust', 'leider', 'kritik', 'müll',
+      'furcht', 'böse', 'falsch', 'schwierigkeiten', 'versagen', 'chaos',
     ]),
   },
   tr: {
@@ -65,10 +73,14 @@ const LEXICONS: Record<Language, Lexicon> = {
     positive: new Set<string>([
       'güzel', 'iyi', 'harika', 'mükemmel', 'sevgi', 'mutlu', 'başarı', 'teşekkür',
       'muhteşem', 'süper', 'hoş', 'faydalı', 'olumlu', 'seviyorum', 'güçlü', 'tavsiye',
+      'keyifli', 'memnun', 'kolay', 'hızlı', 'değerli', 'başarılı', 'sevinç', 'umut',
+      'kaliteli', 'rahat', 'muhteşem', 'şahane', 'avantaj', 'güven', 'sağlam',
     ]),
     negative: new Set<string>([
       'kötü', 'berbat', 'korkunç', 'nefret', 'üzgün', 'kızgın', 'problem', 'sorun',
       'hata', 'olumsuz', 'asla', 'bozuk', 'zayıf', 'sıkıcı', 'felaket', 'maalesef',
+      'pahalı', 'zor', 'imkansız', 'korku', 'endişe', 'dezavantaj', 'risk', 'kayıp',
+      'yanlış', 'kriz', 'başarısız', 'üzücü', 'çirkin', 'kırık', 'eksik', 'şikayet',
     ]),
   },
 }
@@ -159,6 +171,12 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     .sort((a, b) => b.count - a.count)
     .slice(0, 6)
 
+  let longestSentenceWords = 0
+  for (const sentence of sentenceMatches) {
+    const count = (sentence.match(/[\p{L}\p{N}]+/gu) ?? []).length
+    if (count > longestSentenceWords) longestSentenceWords = count
+  }
+
   const wordCount = tokens.length
   const avgSentenceLength = sentenceCount > 0 ? wordCount / sentenceCount : 0
   const avgSyllables = wordCount > 0 ? syllableTotal / wordCount : 0
@@ -183,6 +201,8 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
     paragraphs: paragraphs.length,
     syllables: syllableTotal,
     averageWordLength: wordCount > 0 ? letterTotal / wordCount : 0,
+    averageWordsPerSentence: avgSentenceLength,
+    longestSentenceWords,
     readingMinutes: wordCount / 200,
     readability,
     readabilityLabel: wordCount > 0 ? readabilityLabel(readability, language) : '–',

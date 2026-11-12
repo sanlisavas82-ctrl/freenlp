@@ -41,6 +41,11 @@ describe('analyze – Zählungen', () => {
     expect(top?.count).toBe(2)
     expect(result.topWords.some((entry) => entry.word === 'ist')).toBe(false)
   })
+
+  it('berechnet längsten Satz und Wörter pro Satz', () => {
+    expect(result.longestSentenceWords).toBe(4)
+    expect(result.averageWordsPerSentence).toBe(4)
+  })
 })
 
 describe('analyze – Wortpaare', () => {

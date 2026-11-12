@@ -1,13 +1,25 @@
 # FreeNLP
 
-Web-Anwendung auf Basis von **React 19**, **TypeScript** und **Vite**.
+**Kostenlose Textanalyse direkt im Browser** – ohne Server, ohne Anmeldung, ohne
+Kosten. Alle Berechnungen laufen lokal im Browser; es werden keine Daten
+versendet.
 
-## Tech-Stack
+Gebaut mit **React 19**, **TypeScript** und **Vite**.
 
-- [Vite](https://vite.dev/) – Build-Tool & Dev-Server (HMR)
-- [React 19](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/) (5.9)
-- [ESLint](https://eslint.org/) mit typbasierten Regeln (`typescript-eslint`)
+## Funktionen
+
+- **Statistiken:** Zeichen, Zeichen ohne Leerzeichen, Wörter, einzigartige
+  Wörter, Sätze, Absätze, Silben, Ø Wortlänge, Ø Wörter pro Satz, längster Satz,
+  Lesezeit
+- **Lesbarkeitsindex** (Flesch-Reading-Ease, Amstad-Formel) mit Einstufung
+- **Stimmungsanalyse** (Sentiment) – positiv / negativ / neutral
+- **Häufigste Wörter** und **häufige Wortpaare** (Bigramme) als Balkendiagramm
+- **Zwei Sprachen:** Deutsch (Standard) und Türkisch
+  - Automatische **Spracherkennung** für die Analyse
+  - Oberfläche auf Deutsch oder Türkisch umschaltbar
+- **Ergebnis kopieren** oder als **`.txt` herunterladen**
+- **Text bleibt erhalten** (localStorage) – auch nach dem Neuladen
+- **Dark-Mode** automatisch nach Systemeinstellung
 
 ## Voraussetzungen
 
@@ -22,34 +34,34 @@ npm run dev      # Dev-Server starten (http://localhost:5173)
 
 ## Skripte
 
-| Befehl            | Beschreibung                                      |
-| ----------------- | ------------------------------------------------- |
-| `npm run dev`     | Startet den Vite-Dev-Server mit Hot Module Reload |
+| Befehl            | Beschreibung                                       |
+| ----------------- | -------------------------------------------------- |
+| `npm run dev`     | Startet den Vite-Dev-Server mit Hot Module Reload  |
 | `npm run build`   | Type-Check (`tsc -b`) + Production-Build nach `dist/` |
-| `npm run preview` | Lokale Vorschau des Production-Builds             |
-| `npm run lint`    | Prüft den Code mit ESLint                         |
-| `npm test`        | Führt die Unit-Tests (Vitest) aus                 |
-
-## Linting
-
-Das Projekt nutzt eine typbasierte ESLint-Flat-Config (`eslint.config.js`) mit:
-
-- `tseslint.configs.recommendedTypeChecked`
-- `tseslint.configs.strictTypeChecked`
-- `tseslint.configs.stylisticTypeChecked`
-- `eslint-plugin-react-hooks`
-- `eslint-plugin-react-refresh`
-
-Die type-aware Regeln setzen `strictNullChecks` voraus (in `tsconfig.app.json` /
-`tsconfig.node.json` über `"strict": true` aktiviert).
+| `npm run preview` | Lokale Vorschau des Production-Builds              |
+| `npm run lint`    | Prüft den Code mit ESLint                          |
+| `npm test`        | Führt die Unit-Tests (Vitest) aus                  |
 
 ## Projektstruktur
 
 ```
 freenlp/
-├── src/              # Anwendungscode (Komponenten, Assets, Styles)
-├── public/           # Statische Dateien
-├── eslint.config.js  # ESLint Flat-Config (typbasiert)
-├── tsconfig*.json    # TypeScript-Konfiguration
-└── vite.config.ts    # Vite-Konfiguration
+├── src/
+│   ├── App.tsx            # UI-Komponente
+│   ├── App.css
+│   ├── index.css
+│   ├── main.tsx
+│   └── lib/
+│       ├── analyze.ts      # NLP-Logik (rein, testbar)
+│       ├── analyze.test.ts # Unit-Tests
+│       └── i18n.ts         # Oberflächen-Übersetzungen (DE/TR)
+├── eslint.config.js        # ESLint Flat-Config (typbasiert)
+├── tsconfig*.json
+└── vite.config.ts
 ```
+
+## Qualität
+
+- Typbasierte ESLint-Config (`strictTypeChecked` + `stylisticTypeChecked`)
+- Unit-Tests für das Analyse-Modul mit Vitest
+- Vollständig typisiert (TypeScript, `strict`)

@@ -167,6 +167,8 @@ function App() {
     { label: t.stats.paragraphs, value: formatInteger(analysis.paragraphs) },
     { label: t.stats.syllables, value: formatInteger(analysis.syllables) },
     { label: t.stats.averageWordLength, value: formatDecimal(analysis.averageWordLength) },
+    { label: t.stats.averageWordsPerSentence, value: formatDecimal(analysis.averageWordsPerSentence) },
+    { label: t.stats.longestSentenceWords, value: formatInteger(analysis.longestSentenceWords) },
     { label: t.stats.readingMinutes, value: formatDecimal(analysis.readingMinutes) },
   ]
 
