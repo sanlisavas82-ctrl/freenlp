@@ -75,6 +75,19 @@ describe('analyze – Stimmung', () => {
   it('bleibt ohne Signalwörter neutral', () => {
     expect(analyze('Das Haus steht am Baum.').sentiment).toBe('neutral')
   })
+
+  it('dreht die Polarität bei Negation um', () => {
+    expect(analyze('Das ist nicht gut.').sentiment).toBe('negativ')
+    expect(analyze('Das ist nicht schlecht.').sentiment).toBe('positiv')
+  })
+
+  it('gewichtet Verstärker stärker', () => {
+    const plain = analyze('Es ist gut aber auch schlecht.')
+    expect(plain.sentiment).toBe('neutral')
+    const boosted = analyze('Es ist sehr gut aber auch schlecht.')
+    expect(boosted.sentimentScore).toBeGreaterThan(plain.sentimentScore)
+    expect(boosted.sentiment).toBe('positiv')
+  })
 })
 
 describe('analyze – Türkisch', () => {

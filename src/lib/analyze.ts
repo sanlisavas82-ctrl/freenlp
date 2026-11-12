@@ -36,6 +36,8 @@ interface Lexicon {
   stopwords: Set<string>
   positive: Set<string>
   negative: Set<string>
+  negations: Set<string>
+  intensifiers: Set<string>
 }
 
 const LEXICONS: Record<Language, Lexicon> = {
@@ -64,6 +66,14 @@ const LEXICONS: Record<Language, Lexicon> = {
       'angst', 'sorge', 'nachteil', 'risiko', 'verlust', 'leider', 'kritik', 'müll',
       'furcht', 'böse', 'falsch', 'schwierigkeiten', 'versagen', 'chaos',
     ]),
+    negations: new Set<string>([
+      'nicht', 'kein', 'keine', 'keinen', 'keiner', 'keinem', 'kaum', 'nie',
+      'niemals', 'ohne', 'nein', 'weder', 'nichts',
+    ]),
+    intensifiers: new Set<string>([
+      'sehr', 'besonders', 'extrem', 'total', 'richtig', 'so', 'äußerst',
+      'wirklich', 'ziemlich', 'höchst',
+    ]),
   },
   tr: {
     stopwords: new Set<string>([
@@ -83,6 +93,12 @@ const LEXICONS: Record<Language, Lexicon> = {
       'hata', 'olumsuz', 'asla', 'bozuk', 'zayıf', 'sıkıcı', 'felaket', 'maalesef',
       'pahalı', 'zor', 'imkansız', 'korku', 'endişe', 'dezavantaj', 'risk', 'kayıp',
       'yanlış', 'kriz', 'başarısız', 'üzücü', 'çirkin', 'kırık', 'eksik', 'şikayet',
+    ]),
+    negations: new Set<string>([
+      'değil', 'yok', 'hiç', 'asla', 'olmadan', 'hayır', 'yoktur',
+    ]),
+    intensifiers: new Set<string>([
+      'çok', 'oldukça', 'aşırı', 'gerçekten', 'epey', 'fazla',
     ]),
   },
 }
@@ -142,19 +158,37 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
   const frequency = new Map<string, number>()
   let letterTotal = 0
   let syllableTotal = 0
-  let positiveHits = 0
-  let negativeHits = 0
   const contentWords: string[] = []
 
   for (const token of tokens) {
     letterTotal += token.length
     syllableTotal += countSyllables(token)
-    if (lexicon.positive.has(token)) positiveHits += 1
-    if (lexicon.negative.has(token)) negativeHits += 1
     if (token.length >= 2 && !lexicon.stopwords.has(token)) {
       frequency.set(token, (frequency.get(token) ?? 0) + 1)
       contentWords.push(token)
     }
+  }
+
+  // Stimmung: berücksichtigt Negation ("nicht gut") und Verstärker ("sehr gut")
+  // in einem Fenster von bis zu zwei Wörtern vor dem Stimmungswort.
+  let positiveScore = 0
+  let negativeScore = 0
+  for (let i = 0; i < tokens.length; i += 1) {
+    const token = tokens[i]
+    const isPositive = lexicon.positive.has(token)
+    const isNegative = lexicon.negative.has(token)
+    if (!isPositive && !isNegative) continue
+
+    let negated = false
+    let weight = 1
+    for (let j = Math.max(0, i - 2); j < i; j += 1) {
+      if (lexicon.negations.has(tokens[j])) negated = true
+      if (lexicon.intensifiers.has(tokens[j])) weight = 2
+    }
+
+    const countsAsPositive = negated ? !isPositive : isPositive
+    if (countsAsPositive) positiveScore += weight
+    else negativeScore += weight
   }
 
   const topWords: WordCount[] = [...frequency.entries()]
@@ -197,9 +231,9 @@ export function analyze(text: string, language: Language = 'de'): Analysis {
   const readability =
     wordCount > 0 ? Math.min(100, Math.max(0, Math.round(rawReadability))) : 0
 
-  const sentimentTotal = positiveHits + negativeHits
+  const sentimentTotal = positiveScore + negativeScore
   const sentimentScore =
-    sentimentTotal > 0 ? (positiveHits - negativeHits) / sentimentTotal : 0
+    sentimentTotal > 0 ? (positiveScore - negativeScore) / sentimentTotal : 0
   let sentiment: SentimentLabel = 'neutral'
   if (sentimentScore > 0.2) sentiment = 'positiv'
   else if (sentimentScore < -0.2) sentiment = 'negativ'
